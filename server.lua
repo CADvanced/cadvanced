@@ -1,4 +1,4 @@
-local url = "https://cadvanced.warmlight.co.uk:4000/";
+local url = "https://cadvanced.warmlight.co.uk:4000/api";
 local ids = {}
 
 RegisterServerEvent('cv:updatePosition')
@@ -8,12 +8,15 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
             for k,v in ipairs(GetPlayerIdentifiers(Source)) do
 				if string.sub(v, 1, string.len("steam:")) == "steam:" then
 					local id = v:gsub("steam:","")
-					local payload = {
-						id = id,
-						x = x,
-						y = y,
-						z = z
-					}
+                    local payload = {  
+                        operationName = null,
+                        variables = {  
+                            steamId = id,
+                            x = x,
+                            y = y
+                        },
+                        query = "mutation ($steamId: String!, $x: String!, $y: String!) {\n  updateUserLocation(steamId: $steamId, x: $x, y: $y) {\n    id\n    __typename\n  }\n}\n"
+                    };
 					local tosend = json.encode(payload)
 					PerformHttpRequest(url, function(errorCode, resultData, resultHeaders)
 						print (tostring(resultData))
