@@ -1,4 +1,4 @@
-local url = "https://cadvanced.warmlight.co.uk:4000/api";
+local url = "https://alpha.cadvanced.app:4000/api";
 local ids = {}
 
 RegisterServerEvent('cv:updatePosition')
