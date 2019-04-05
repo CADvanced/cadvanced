@@ -1,6 +1,17 @@
 local url = "https://alpha.cadvanced.app:4000/api";
 local ids = {}
 
+SetHttpHandler(function(req, res)
+    local path = req.path;
+
+    if req.path == '/test' then
+        res.send(json.encode({
+            hello = 'Hi'
+        }))
+        return
+    end
+end)
+
 RegisterServerEvent('cv:updatePosition')
 AddEventHandler('cv:updatePosition', function(x, y, z)
     local Source = source
