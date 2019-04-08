@@ -1,0 +1,23 @@
+/* This applies to all elements (bad practice) */
+* {
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* This css centers at the middle of the screen */
+#container {
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 20px;
+    position: absolute;
+    color: rgb(241, 235, 235);
+    bottom: 0px;
+    right: 0px;
+    transform: translate(-50%, -50%);
+    font-size: 45px;
+    background-color: #272727;
+    border: 2px solid #dad9d9;
+}
+
+.small {
+    font-size: 25px;
+}
