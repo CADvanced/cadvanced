@@ -52,6 +52,14 @@ function getAllUnits()
     )
 end
 
+local passUserToClient = function(source, jsonData)
+    TriggerClientEvent(
+        "data:user",
+        -1,
+        jsonData
+    )
+end
+
 -- Grab users units and calls
 function getUser(source)
     local id = getSteamId(source)
@@ -69,6 +77,7 @@ function getUser(source)
             end
             userUnits[id] = json.decode(resultData)
             print("CADvanced: Retrieved all user units for joined user")
+            passUserToClient(source, resultData)
         end,
         'POST',
         reqToSend,
@@ -129,6 +138,24 @@ SetHttpHandler(function(req, res)
     end
 end)
 
+-- Get the player's Steam ID
+function getSteamId(source)
+	local id = nil
+	for k,v in ipairs(GetPlayerIdentifiers(source))do
+		if string.sub(v, 1, string.len("steam:")) == "steam:" then
+            local trimmed = v:gsub("steam:","")
+			id = trimmed
+			break
+		end
+    end
+    return id
+end
+
+RegisterServerEvent('cv:getUser')
+AddEventHandler('cv:getUser', function()
+    getUser(source)    
+end)
+
 -- Send a player's location when prompted to
 RegisterServerEvent('cv:updatePosition')
 AddEventHandler('cv:updatePosition', function(x, y, z)
@@ -158,19 +185,6 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
             end
     end)
 end)
-
--- Get the player's Steam ID
-function getSteamId(source)
-	local id = nil
-	for k,v in ipairs(GetPlayerIdentifiers(source))do
-		if string.sub(v, 1, string.len("steam:")) == "steam:" then
-            local trimmed = v:gsub("steam:","")
-			id = trimmed
-			break
-		end
-    end
-    return id
-end
 
 -- Check if a user has a SteamID
 local validate = function(source)
