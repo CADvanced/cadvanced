@@ -1,10 +1,30 @@
-$(function() {
-    window.addEventListener('message', event => {
-        const item = event.data;
-        if (item !== undefined && item.type === 'data') {
-            const update = JSON.parse(item.data);
-            const out = update.data.getUser.units.map(unit => unit.callSign);
-            $('#container').text('Units: ' + out.join(', '));
+var app = new Vue({
+    el: '#app',
+    data: {
+        display: false,
+        cadData: {}
+    },
+    methods: {
+        processMessage: function() {
+            const item = event.data;
+            if (item !== undefined) {
+                if (item.type === 'data') {
+                    const update = JSON.parse(item.data);
+                    this.cadData = update.data.getUser;
+                } else if (item.type === 'toggle') {
+                    if (item.toToggle === 'cad') {
+                        this.display = !this.display;
+                    }
+                }
+            }
         }
-    });
+    },
+    created: function() {
+        window.addEventListener('message', event => this.processMessage(event));
+    },
+    destroyed: function() {
+        window.removeEventListener('message', event =>
+            this.processMessage(event)
+        );
+    }
 });

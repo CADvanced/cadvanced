@@ -60,9 +60,10 @@ local passUserToClient = function(source, jsonData)
     )
 end
 
--- Grab users units and calls
-function getUser(source)
+-- Grab users units and calls and store
+function populateUser(source, shouldPass)
     local id = getSteamId(source)
+    --[[
     local userPayload = {
         operationName = null,
         query = '{ getUser(steamId: "' .. id .. '") { units { callSign unitType { name } unitState { name } assignedCalls { callerInfo markerX markerY callIncidents { name } callType { name } callGrade { name } callLocations { name } callDescriptions { text } } } } }'
@@ -77,12 +78,30 @@ function getUser(source)
             end
             userUnits[id] = json.decode(resultData)
             print("CADvanced: Retrieved all user units for joined user")
-            passUserToClient(source, resultData)
         end,
         'POST',
         reqToSend,
         { ["Content-Type"] = 'application/json' }
     )
+    ]]
+    -- Temporarily mocking response
+    local str = '{"data":{"getUser":{"units":[{"callSign":"Juliet Bravo","unitType":{"name":"Traffic"},"unitState":{"name":"Inactive"},"assignedCalls":[{"callerInfo":"oihoihohoihoh","markerX":-96.5717044905843,"markerY":3911.15403186866,"callIncidents":[{"name": "Arson"}],"callType":{"name": "999"},"callGrade":{"name": "Grade 2"},"callLocations":[{"name": "Abattoir Avenue"},{"name": "Dunstable Drive"}],"callDescriptions":[{"text":"oijjoijoijoij"}]}]}]}}}'
+    userUnits[id] = str
+    if shouldPass then
+        passUserToClient(source, userUnits[id])
+    end
+end
+
+-- Get the current user object from the store and pass it
+-- to the client
+function getUser(source)
+    local id = getSteamId(source)
+    if userUnits[id] == nil then
+        -- Populate the user AND pass the result to the client
+        populateUser(source, 1)
+    else
+        passUserToClient(source, userUnits[id])
+    end
 end
 
 -- Rudimentary router
@@ -151,9 +170,26 @@ function getSteamId(source)
     return id
 end
 
+-- Check if a user has a SteamID
+local validate = function(source)
+    local id = getSteamId(source)
+	if not id then
+		setKickReason("Unable to find SteamID, please relaunch FiveM with steam open or restart FiveM & Steam if steam is already open")
+		CancelEvent()
+	end
+end
+
+-- Allow the client to request the user object
 RegisterServerEvent('cv:getUser')
 AddEventHandler('cv:getUser', function()
-    getUser(source)    
+    getUser(source)
+end)
+
+-- Validate and get a user when they connect
+RegisterServerEvent('playerConnecting')
+AddEventHandler('playerConnecting', function()
+    validate(source)
+    populateUser(source)
 end)
 
 -- Send a player's location when prompted to
@@ -184,21 +220,6 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
 				end
             end
     end)
-end)
-
--- Check if a user has a SteamID
-local validate = function(source)
-    local id = getSteamId(source)
-	if not id then
-		setKickReason("Unable to find SteamID, please relaunch FiveM with steam open or restart FiveM & Steam if steam is already open")
-		CancelEvent()
-	end
-end
-
-RegisterServerEvent('playerConnecting')
-AddEventHandler('playerConnecting', function()
-    validate(source)
-    getUser(source)
 end)
 
 -- Initial population
