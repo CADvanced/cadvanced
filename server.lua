@@ -1,114 +1,26 @@
 local url = "https://192.168.0.101:4000/api";
 
-allCalls = {}
-allUnits = {}
-userUnits = {}
-
--- Grab all calls
-function getAllCalls()
-    local callPayload = {  
-        operationName = null,
-        variables = {},
-        query = "{ allCalls { id callerInfo markerX markerY callGrade { name } callType { name } callLocations { name } callIncidents { name } } }"
-    };
-    local callToSend = json.encode(callPayload)
-    PerformHttpRequest(
-        url,
-        function (errorCode, resultData, resultHeaders)
-            if errorCode ~= 200 then
-                print('CADVanced: ERROR - Unable to retrieve all calls, error code ' .. errorCode)
-                return errorCode
-            end
-            allCalls = json.decode(resultData)
-            print("CADvanced: Retrieved all calls")
-        end,
-        'POST',
-        callToSend,
-        { ["Content-Type"] = 'application/json' }
-    )
-end
-
--- Grab all units
-function getAllUnits()
-    local callPayload = {  
-        operationName = null,
-        variables = {},
-        query = "{  allUnits { callSign unitType { name } unitState { name colour } } }"
-    }
-    local unitToSend = json.encode(callPayload)
-    PerformHttpRequest(
-        url,
-        function (errorCode, resultData, resultHeaders)
-            if errorCode ~= 200 then
-                print('CADvanced: ERROR - Unable to retrieve all units, error code ' .. errorCode)
-                return errorCode
-            end
-            allUnits = json.decode(resultData)
-            print("CADvanced: Retrieved all units")
-        end,
-        'POST',
-        unitToSend,
-        { ["Content-Type"] = 'application/json' }
-    )
-end
-
-local passUserToClient = function(source, jsonData)
-    TriggerClientEvent(
-        "data:user",
-        -1,
-        jsonData
-    )
-end
-
--- Grab users units and calls and store
-function populateUser(source, shouldPass)
-    local id = getSteamId(source)
-    --[[
-    local userPayload = {
-        operationName = null,
-        query = '{ getUser(steamId: "' .. id .. '") { units { callSign unitType { name } unitState { name } assignedCalls { callerInfo markerX markerY callIncidents { name } callType { name } callGrade { name } callLocations { name } callDescriptions { text } } } } }'
-    }
-    local reqToSend = json.encode(userPayload)
-    PerformHttpRequest(
-        url,
-        function (errorCode, resultData, resultHeaders)
-            if errorCode ~= 200 then
-                print('CADvanced: ERROR - Unable to retrieve user units, error code ' .. errorCode)
-                return errorCode
-            end
-            userUnits[id] = json.decode(resultData)
-            print("CADvanced: Retrieved all user units for joined user")
-        end,
-        'POST',
-        reqToSend,
-        { ["Content-Type"] = 'application/json' }
-    )
-    ]]
-    -- Temporarily mocking response
-    local str = '{"data":{"getUser":{"units":[{"callSign":"Juliet Bravo","unitType":{"name":"Traffic"},"unitState":{"name":"Inactive"},"assignedCalls":[{"callerInfo":"oihoihohoihoh","markerX":-96.5717044905843,"markerY":3911.15403186866,"callIncidents":[{"name": "Arson"}],"callType":{"name": "999"},"callGrade":{"name": "Grade 2"},"callLocations":[{"name": "Abattoir Avenue"},{"name": "Dunstable Drive"}],"callDescriptions":[{"text":"oijjoijoijoij"}]}]}]}}}'
-    userUnits[id] = str
-    if shouldPass then
-        passUserToClient(source, userUnits[id])
-    end
-end
-
--- Get the current user object from the store and pass it
--- to the client
-function getUser(source)
-    local id = getSteamId(source)
-    if userUnits[id] == nil then
-        -- Populate the user AND pass the result to the client
-        populateUser(source, 1)
-    else
-        passUserToClient(source, userUnits[id])
-    end
-end
+local allUnits = {}
 
 -- Rudimentary router
 SetHttpHandler(function(req, res)
     if req.method == 'POST' then
         -- POST routes
-        if req.path == '/player_update' then
+        if req.path == 'update' then
+            req.setDataHandler(function(body)
+                local data = json.decode(body)
+                local obj = data.object;
+                local objId = data.objectId;
+                local unit = data.payload;
+                --[[
+                for key, value in pairs(allUnits) do
+                    if value.displayName == 'Red' then
+                        print(key)
+                    end
+                end
+                --]]
+            end)
+        elseif req.path == '/player_update' then
             req.setDataHandler(function(body)
                 local data = json.decode(body)
                 if data.event == 'addedToUnit' then
@@ -138,6 +50,7 @@ SetHttpHandler(function(req, res)
                 if data.event == 'addedToCall' then
                     local toPlayerIds = data.toPlayerIds
                     local callId = data.callId
+                    print(data)
                     -- TODO: Dispatch to handler for assigning to call
                 elseif data.event == 'removedFromCall' then
                     local toPlayerIds = data.toPlayerIds
@@ -156,6 +69,70 @@ SetHttpHandler(function(req, res)
         end
     end
 end)
+
+-- Grab all units
+function getAllUnits()
+    local unitPayload = {  
+        operationName = null,
+        variables = {},
+        query = "{allUnits{callSign unitType{name}unitState {name colour}assignedCalls{id callerInfo markerX markerY callGrade{name}callType {name}callLocations {name}callIncidents{name}}}}"
+    }
+    local queryToSend = json.encode(unitPayload)
+    PerformHttpRequest(
+        url,
+        function (errorCode, resultData, resultHeaders)
+            if errorCode ~= 200 then
+                print('CADvanced: ERROR - Unable to retrieve all units, error code ' .. errorCode)
+                return errorCode
+            end
+            allUnits = json.decode(resultData)
+            print("CADvanced: Retrieved all units")
+        end,
+        'POST',
+        queryToSend,
+        { ["Content-Type"] = 'application/json' }
+    )
+end
+
+local passToClient = function(source, jsonData, type)
+    print('Passing ' .. type .. ' to client')
+    local targetUser
+    if source then
+        targetUser = source
+    else
+        targetUser = -1
+    end
+    TriggerClientEvent(
+        "data:"..type,
+        targetUser,
+        jsonData
+    )
+end
+
+-- Grab user and pass to client
+function getUser(source)
+    print('Getting user')
+    local id = getSteamId(source)
+    local userPayload = {
+        operationName = null,
+        query = '{ getUser(steamId: "' .. id .. '") { id steamId userName avatarUrl } }'
+    }
+    local reqToSend = json.encode(userPayload)
+    PerformHttpRequest(
+        url,
+        function (errorCode, resultData, resultHeaders)
+            if errorCode ~= 200 then
+                print('CADvanced: ERROR - Unable to retrieve user units, error code ' .. errorCode)
+                return errorCode
+            end
+            passToClient(source, json.decode(resultData), 'user')
+            print("CADvanced: Retrieved user");
+        end,
+        'POST',
+        reqToSend,
+        { ["Content-Type"] = 'application/json' }
+    )
+end
 
 -- Get the player's Steam ID
 function getSteamId(source)
@@ -179,17 +156,25 @@ local validate = function(source)
 	end
 end
 
--- Allow the client to request the user object
-RegisterServerEvent('cv:getUser')
-AddEventHandler('cv:getUser', function()
+-- Pass the client the units when requested
+RegisterServerEvent('cv:passUnits')
+AddEventHandler('cv:passUnits', function()
+    -- We already have them, so we don't need to get them
+    passToClient(source, allUnits, 'units')
+end)
+
+-- Pass the client the user when requested
+RegisterServerEvent('cv:passUser')
+AddEventHandler('cv:passUser', function()
+    -- This call gets them a returns them to the client, since we don't
+    -- hold this data ourselves
     getUser(source)
 end)
 
--- Validate and get a user when they connect
+-- Validate a user when they connect
 RegisterServerEvent('playerConnecting')
 AddEventHandler('playerConnecting', function()
     validate(source)
-    populateUser(source)
 end)
 
 -- Send a player's location when prompted to
@@ -223,5 +208,4 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
 end)
 
 -- Initial population
-getAllCalls()
 getAllUnits()

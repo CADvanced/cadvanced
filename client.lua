@@ -1,7 +1,8 @@
 local oldPos
 
 local toggleCad = function()
-    TriggerServerEvent('cv:getUser')
+    TriggerServerEvent('cv:passUnits')
+    TriggerServerEvent('cv:passUser')
     SendNUIMessage({
       type = "toggle",
       toToggle = "cad"
@@ -28,19 +29,31 @@ Citizen.CreateThread(function()
     end
 end)
 
+-- Receive all units object from the server then pass it to NUI
+RegisterNetEvent('data:units')
+AddEventHandler('data:units', function(jsonData)
+    -- Pass data to NUI
+    SendNUIMessage({
+      type = "units",
+      units = jsonData
+    })
+end)
+
 -- Receive user object from the server then pass it to NUI
 RegisterNetEvent('data:user')
 AddEventHandler('data:user', function(jsonData)
     -- Pass data to NUI
     SendNUIMessage({
-      type = "data",
-      data = jsonData
+      type = "user",
+      user = jsonData
     })
 end)
 
+--[[
 RegisterNetEvent('msg:updateMsg')
 AddEventHandler('msg:updateMsg', function(message)
     -- Change to
     -- https://forum.fivem.net/t/switching-from-chatmessage-to-chat-addmessage/373482
     TriggerEvent('chatMessage', "", {255, 255, 255}, message)
 end)
+--]]
