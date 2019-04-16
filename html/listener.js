@@ -3,7 +3,8 @@ var app = new Vue({
     data: {
         display: false,
         user: {},
-        units: []
+        units: [],
+        displayUnits: []
     },
     methods: {
         processMessage: function() {
@@ -14,11 +15,20 @@ var app = new Vue({
                         this.display = !this.display;
                     }
                 } else if (item.type == 'units') {
-                    this.units = item.units;
+                    this.units = item.units.data.allUnits;
                 } else if (item.type == 'user') {
-                    this.user = item.user;
+                    this.user = item.user.data.getUser;
+                    this.calculateUserUnits();
                 }
             }
+        },
+        calculateUserUnits: function() {
+            this.displayUnits = this.units.filter(unit => {
+                const isInUnit = unit.users.find(
+                    user => user.id === this.user.id
+                );
+                return isInUnit ? true : false;
+            });
         }
     },
     created: function() {
