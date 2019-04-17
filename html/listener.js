@@ -3,8 +3,7 @@ var app = new Vue({
     data: {
         display: false,
         user: {},
-        units: [],
-        displayUnits: []
+        units: []
     },
     methods: {
         processMessage: function() {
@@ -18,12 +17,15 @@ var app = new Vue({
                     this.units = item.units.data.allUnits;
                 } else if (item.type == 'user') {
                     this.user = item.user.data.getUser;
-                    this.calculateUserUnits();
                 }
             }
-        },
-        calculateUserUnits: function() {
-            this.displayUnits = this.units.filter(unit => {
+        }
+    },
+    computed: {
+        // Filter the displayed units to only those that the
+        // user belongs to
+        displayUnits: function() {
+            return this.units.filter(unit => {
                 const isInUnit = unit.users.find(
                     user => user.id === this.user.id
                 );

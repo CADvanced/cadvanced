@@ -32,6 +32,7 @@ end)
 -- Receive all units object from the server then pass it to NUI
 RegisterNetEvent('data:units')
 AddEventHandler('data:units', function(jsonData)
+    print('Passing units to NUI')
     -- Pass data to NUI
     SendNUIMessage({
       type = "units",
