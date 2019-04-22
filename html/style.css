@@ -1,23 +1,67 @@
-/* This applies to all elements (bad practice) */
-* {
+#terminal {
+    font-family: monospace;
+    width: 400px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    position: fixed;
+    right: 0;
+    max-height: 50%;
+    bottom: 25%;
+    background: #111;
     color: #fff;
-    font-family: Arial, Helvetica, sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
+    opacity: 0.8;
 }
 
-/* This css centers at the middle of the screen */
-#container {
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 20px;
-    position: absolute;
-    color: rgb(241, 235, 235);
-    bottom: 0px;
-    right: 0px;
-    transform: translate(-50%, -50%);
-    font-size: 45px;
-    background-color: #272727;
-    border: 2px solid #dad9d9;
+#terminal h1 {
+    background: #ccc;
+    color: #111;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 500;
+    padding: 5px;
 }
 
-.small {
-    font-size: 25px;
+#mainDisplay {
+    padding: 0 15px 15px 15px;
+}
+
+#userDisplay h2 {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 400;
+    margin: 10px 0;
+}
+
+.unitDisplay {
+    margin: 15px 0;
+}
+
+.unitDisplay:first-of-type {
+    margin-top: 0;
+}
+
+.unitDisplay:last-of-type {
+    margin-bottom: 0;
+}
+
+.unitDisplay h3 {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 300;
+    margin-bottom: 5px;
+}
+
+.callDisplay,
+.noCallDisplay {
+    margin: 10px 0;
+}
+
+.callDisplay:first-of-type {
+    margin-top: 0;
+}
+
+.callDisplay:last-of-type {
+    margin-bottom: 0;
 }

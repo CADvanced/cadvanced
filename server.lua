@@ -22,7 +22,7 @@ function getAllUnits(pass)
     local unitPayload = {  
         operationName = null,
         variables = {},
-        query = "{allUnits{callSign users{id}unitType{name}unitState {name colour}assignedCalls{id callerInfo markerX markerY callGrade{name}callType {name}callLocations {name}callIncidents{name}}}}"
+        query = "{allUnits{callSign users{id}unitType{name}unitState {name colour}assignedCalls{id callerInfo markerX markerY callGrade{name}callType {name}callLocations {name}callIncidents{name}callDescriptions{text}}}}"
     }
     local queryToSend = json.encode(unitPayload)
     PerformHttpRequest(

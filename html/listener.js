@@ -1,5 +1,63 @@
+Vue.component('call', {
+    props: ['call'],
+    template: `
+        <div class="callDisplay">
+            <p>Info: {{call.callerInfo}}</p>
+            <p>Type: {{call.callType.name}}</p>
+            <p>Grade: {{call.callGrade.name}}</p>
+            <p>Incidents: {{call.callIncidents.map(inc => inc.name).join(', ')}}</p>
+            <p>Locations: {{call.callLocations.map(inc => inc.name).join(', ')}}</p>
+            <div>
+                Descriptions:
+                <p v-for="description in call.callDescriptions" v-bind:description="description">
+                    {{ description.text }}
+                </p>
+            </div>
+        </div>`
+});
+
+Vue.component('unit', {
+    props: ['unit'],
+    template: `
+        <div class="unitDisplay">
+            <h3 v-bind:style="{ color: '#' + unit.unitState.colour }">{{ unit.callSign }} - {{ unit.unitType.name }}</h3>
+            <call v-if="unit.assignedCalls.length > 0" v-for="call in unit.assignedCalls" v-bind:call="call"></call>
+            <div v-if="unit.assignedCalls.length == 0" class="noCallDisplay">No assigned calls</div>
+        </div>`
+});
+
+Vue.component('unitsDisplay', {
+    props: ['units'],
+    template: `
+        <div id="unitsDisplay">
+            <unit v-for="unit in units" v-bind:unit="unit"></unit>
+        </div>`
+});
+
+Vue.component('userDisplay', {
+    props: ['user'],
+    template: `
+        <div id="userDisplay">
+            <h2>Officer: {{ user.userName }}</h2>
+        </div>`
+});
+
+Vue.component('terminal', {
+    props: ['user', 'units'],
+    template: `
+        <div id="terminal">
+            <h1>TERMINAL</h1>
+            <div id="mainDisplay">
+                <userDisplay v-bind:user="user"></userDisplay>
+                <unitsDisplay v-bind:units="units"></unitsDisplay>
+            </div>
+        </div>`
+});
+
 var app = new Vue({
     el: '#app',
+    template:
+        '<terminal v-if="display" v-bind:user="user" v-bind:units="displayUnits"></terminal>',
     data: {
         display: false,
         user: {},
