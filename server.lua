@@ -59,44 +59,6 @@ SetHttpHandler(function(req, res)
                     json.encode({ result = 'Message sent'})
                 )
             end)
-        elseif req.path == '/player_update' then
-            req.setDataHandler(function(body)
-                local data = json.decode(body)
-                if data.event == 'addedToUnit' then
-                    local toPlayerIds = data.toPlayerIds
-                    local unitId = data.unitId
-                    TriggerClientEvent(
-                        "player:addedToUnit",
-                        unitId    
-                    )
-                elseif data.event == 'removedFromUnit' then
-                    local toPlayerIds = data.toPlayerIds
-                    local unitId = data.unitId
-                    -- TODO: Dispatch to handler for removing from unit
-                end
-                --TriggerClientEvent(
-                --    "msg:updateMsg",
-                --    -1,
-                --    'CADvanced: ' .. data.msg
-                --)
-                res.send(
-                    json.encode({ result = 'Message sent'})
-                )
-            end)
-        elseif req.path == '/unit_update' then
-            req.setDataHandler(function(body)
-                local data = json.decode(body)
-                if data.event == 'addedToCall' then
-                    local toPlayerIds = data.toPlayerIds
-                    local callId = data.callId
-                    print(data)
-                    -- TODO: Dispatch to handler for assigning to call
-                elseif data.event == 'removedFromCall' then
-                    local toPlayerIds = data.toPlayerIds
-                    local callId = data.callId
-                    -- TODO: Dispatch to handler for assigning from unit
-                end
-            end)
         elseif req.path == '/special_event' then
             req.setDataHandler(function(body)
                 local data = json.decode(body)
