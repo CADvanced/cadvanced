@@ -1,5 +1,5 @@
 local oldPos
-local blips
+local blips = {}
 
 local toggleCad = function()
     TriggerServerEvent('cv:passUnits')
@@ -10,10 +10,16 @@ local toggleCad = function()
     })
 end
 
+local removeBlips = function()
+    for b,blip in pairs(blips) do
+        RemoveBlip(blip)
+    end
+    blips = {}
+end
+
 local setBlips = function(assignedCalls)
     blips = {}
     for j,c in ipairs(assignedCalls) do
-        local callId = 'call_' .. c.id
         local markerX = c.markerX
         local markerY = c.markerY
         if (markerX and markerY) then
@@ -25,7 +31,7 @@ local setBlips = function(assignedCalls)
             BeginTextCommandSetBlipName("String")
             AddTextComponentString(c.callType.name .. ' - ' .. c.callGrade.name)
             EndTextCommandSetBlipName(blip)
-            blips[callId] = blip
+            blips[c.id] = blip
         end
     end
 end
@@ -54,12 +60,14 @@ end)
 RegisterNetEvent('data:units')
 AddEventHandler('data:units', function(jsonData)
     -- Create blips for any calls that have them
+    -- First remove any existing blips
     Citizen.CreateThread(function()
+        removeBlips()
+        -- Now populate the blips
         for i,u in ipairs(jsonData.data.allUnits) do
             setBlips(u.assignedCalls)
         end
     end)
-    print('Passing units to NUI')
     -- Pass data to NUI
     SendNUIMessage({
       type = "units",
