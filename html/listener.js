@@ -9,7 +9,7 @@ Vue.component('call', {
             <p>Locations: {{call.callLocations.map(inc => inc.name).join(', ')}}</p>
             <div>
                 Descriptions:
-                <p v-for="description in call.callDescriptions" v-bind:description="description">
+                <p v-bind:key="description.id" v-for="description in call.callDescriptions" v-bind:description="description">
                     {{ description.text }}
                 </p>
             </div>
@@ -21,7 +21,7 @@ Vue.component('unit', {
     template: `
         <div class="unitDisplay">
             <h3 v-bind:style="{ color: '#' + unit.unitState.colour }">{{ unit.callSign }} - {{ unit.unitType.name }}</h3>
-            <call v-if="unit.assignedCalls.length > 0" v-for="call in unit.assignedCalls" v-bind:call="call"></call>
+            <call v-if="unit.assignedCalls.length > 0" v-bind:key="call.id" v-for="call in unit.assignedCalls" v-bind:call="call"></call>
             <div v-if="unit.assignedCalls.length == 0" class="noCallDisplay">No assigned calls</div>
         </div>`
 });
@@ -30,7 +30,7 @@ Vue.component('unitsDisplay', {
     props: ['units'],
     template: `
         <div id="unitsDisplay">
-            <unit v-for="unit in units" v-bind:unit="unit"></unit>
+            <unit v-for="unit in units" v-bind:key="unit.id" v-bind:unit="unit"></unit>
         </div>`
 });
 
