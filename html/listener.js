@@ -1,3 +1,5 @@
+import { Howl } from 'howler';
+
 Vue.component('call', {
     props: ['call'],
     template: `
@@ -64,6 +66,10 @@ var app = new Vue({
         units: []
     },
     methods: {
+        playRoger: function() {
+            const roger = new Howl({ src: ['./sounds/roger.ogg'] });
+            roger.play();
+        },
         processMessage: function() {
             const item = event.data;
             if (item !== undefined) {
@@ -72,6 +78,7 @@ var app = new Vue({
                         this.display = !this.display;
                     }
                 } else if (item.type == 'units') {
+                    this.playRoger();
                     this.units = item.units.data.usersUnits;
                 } else if (item.type == 'user') {
                     this.user = item.user.data.getUser;
