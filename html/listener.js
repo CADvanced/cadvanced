@@ -57,7 +57,7 @@ Vue.component('terminal', {
 var app = new Vue({
     el: '#app',
     template:
-        '<terminal v-if="display" v-bind:user="user" v-bind:units="displayUnits"></terminal>',
+        '<terminal v-if="display" v-bind:user="user" v-bind:units="units"></terminal>',
     data: {
         display: false,
         user: {},
@@ -72,7 +72,7 @@ var app = new Vue({
                         this.display = !this.display;
                     }
                 } else if (item.type == 'units') {
-                    this.units = item.units.data.allUnits;
+                    this.units = item.units.data.usersUnits;
                 } else if (item.type == 'user') {
                     this.user = item.user.data.getUser;
                 }

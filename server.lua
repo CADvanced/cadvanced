@@ -1,9 +1,6 @@
 local url = "https://192.168.0.101:4000/api";
 
-local allUnits = {}
-
 local passToClient = function(source, jsonData, type)
-    print('Passing ' .. type .. ' to client')
     local targetUser
     if source then
         targetUser = source
@@ -18,11 +15,11 @@ local passToClient = function(source, jsonData, type)
 end
 
 -- Grab all units
-function getAllUnits(pass)
+function getAllUnits(source)
+    local id = getSteamId(source)
     local unitPayload = {  
         operationName = null,
-        variables = {},
-        query = "{allUnits{callSign users{id}unitType{name}unitState {name colour}assignedCalls{id callerInfo markerX markerY callGrade{name}callType {name}callLocations {name}callIncidents{name}callDescriptions{text}}}}"
+        query = '{usersUnits(steamId:"' .. id .. '"){callSign unitType{name}unitState {name colour}assignedCalls{id callerInfo markerX markerY callGrade{name}callType {name}callLocations {name}callIncidents{name}callDescriptions{text}}}}'
     }
     local queryToSend = json.encode(unitPayload)
     PerformHttpRequest(
@@ -32,11 +29,7 @@ function getAllUnits(pass)
                 print('CADvanced: ERROR - Unable to retrieve all units, error code ' .. errorCode)
                 return errorCode
             end
-            allUnits = json.decode(resultData)
-            if pass then
-                passToClient(nil, allUnits, 'units')
-            end
-            print("CADvanced: Retrieved all units")
+            passToClient(source, json.decode(resultData), 'units')
         end,
         'POST',
         queryToSend,
@@ -60,8 +53,8 @@ SetHttpHandler(function(req, res)
             req.setDataHandler(function(body)
                 local data = json.decode(body)
                 if (data.event == 'update' and data.object == 'units') then
-                    -- Get all the units and pass them to the client
-                    getAllUnits(1)
+                    -- Prompt each client to refetch it's units
+                    TriggerClientEvent("event:refetchUnits", -1)
                 end
                 res.send(
                     json.encode({ result = 'Message sent'})
@@ -89,7 +82,6 @@ end)
 
 -- Grab user and pass to client
 function getUser(source)
-    print('Getting user')
     local id = getSteamId(source)
     local userPayload = {
         operationName = null,
@@ -104,7 +96,6 @@ function getUser(source)
                 return errorCode
             end
             passToClient(source, json.decode(resultData), 'user')
-            print("CADvanced: Retrieved user");
         end,
         'POST',
         reqToSend,
@@ -137,8 +128,7 @@ end
 -- Pass the client the units when requested
 RegisterServerEvent('cv:passUnits')
 AddEventHandler('cv:passUnits', function()
-    -- We already have them, so we don't need to get them
-    passToClient(source, allUnits, 'units')
+    getAllUnits(source)
 end)
 
 -- Pass the client the user when requested
@@ -184,6 +174,3 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
             end
     end)
 end)
-
--- Initial population
-getAllUnits()

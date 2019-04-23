@@ -64,7 +64,7 @@ AddEventHandler('data:units', function(jsonData)
     Citizen.CreateThread(function()
         removeBlips()
         -- Now populate the blips
-        for i,u in ipairs(jsonData.data.allUnits) do
+        for i,u in ipairs(jsonData.data.usersUnits) do
             setBlips(u.assignedCalls)
         end
     end)
@@ -90,4 +90,9 @@ AddEventHandler('msg:updateMsg', function(payload)
     -- Change to
     -- https://forum.fivem.net/t/switching-from-chatmessage-to-chat-addmessage/373482
     TriggerEvent('chatMessage', "", {255, 255, 255}, 'CADvanced: ' .. payload.message)
+end)
+
+RegisterNetEvent('event:refetchUnits')
+AddEventHandler('event:refetchUnits', function()
+    TriggerServerEvent('cv:passUnits')
 end)
