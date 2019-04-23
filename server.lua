@@ -37,10 +37,17 @@ function getAllUnits(source)
     )
 end
 
-function sendMessageToUnit(payload)
+function sendMessageTo(payload)
+    local destination = -1
+    if payload.steamId then
+        local id = getUserFromSteamId(payload.steamId)
+        if id then
+            destination = id
+        end
+    end
     TriggerClientEvent(
         "msg:updateMsg",
-        -1,
+        destination,
         payload
     )
 end
@@ -63,7 +70,7 @@ SetHttpHandler(function(req, res)
         elseif req.path == '/message' then
             req.setDataHandler(function(body)
                 local data = json.decode(body)
-                sendMessageToUnit(data)
+                sendMessageTo(data)
                 res.send(
                     json.encode({ result = 'Message sent'})
                 )
@@ -105,8 +112,8 @@ end
 
 -- Get the player's Steam ID
 function getSteamId(source)
-	local id = nil
-	for k,v in ipairs(GetPlayerIdentifiers(source))do
+    local id = nil
+    for k,v in ipairs(GetPlayerIdentifiers(source))do
 		if string.sub(v, 1, string.len("steam:")) == "steam:" then
             local trimmed = v:gsub("steam:","")
 			id = trimmed
@@ -114,6 +121,19 @@ function getSteamId(source)
 		end
     end
     return id
+end
+
+-- Get a user's server Id from their Steam ID
+function getUserFromSteamId(steamId)
+    local players = GetPlayers()
+    -- Iterate all players until we find the one we want
+    for _, player in ipairs(players) do
+        local id = getSteamId(player)
+        if id and id == steamId then
+            return player
+        end
+    end
+    return nil
 end
 
 -- Check if a user has a SteamID
