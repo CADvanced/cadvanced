@@ -85,11 +85,9 @@ AddEventHandler('data:user', function(jsonData)
     })
 end)
 
---[[
 RegisterNetEvent('msg:updateMsg')
-AddEventHandler('msg:updateMsg', function(message)
+AddEventHandler('msg:updateMsg', function(payload)
     -- Change to
     -- https://forum.fivem.net/t/switching-from-chatmessage-to-chat-addmessage/373482
-    TriggerEvent('chatMessage', "", {255, 255, 255}, message)
+    TriggerEvent('chatMessage', "", {255, 255, 255}, 'CADvanced: ' .. payload.message)
 end)
---]]

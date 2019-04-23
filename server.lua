@@ -44,6 +44,14 @@ function getAllUnits(pass)
     )
 end
 
+function sendMessageToUnit(payload)
+    TriggerClientEvent(
+        "msg:updateMsg",
+        -1,
+        payload
+    )
+end
+
 -- Rudimentary router
 SetHttpHandler(function(req, res)
     if req.method == 'POST' then
@@ -55,6 +63,14 @@ SetHttpHandler(function(req, res)
                     -- Get all the units and pass them to the client
                     getAllUnits(1)
                 end
+                res.send(
+                    json.encode({ result = 'Message sent'})
+                )
+            end)
+        elseif req.path == '/message' then
+            req.setDataHandler(function(body)
+                local data = json.decode(body)
+                sendMessageToUnit(data)
                 res.send(
                     json.encode({ result = 'Message sent'})
                 )
