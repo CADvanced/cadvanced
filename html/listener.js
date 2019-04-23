@@ -1,5 +1,3 @@
-import { Howl } from 'howler';
-
 Vue.component('call', {
     props: ['call'],
     template: `
