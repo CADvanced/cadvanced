@@ -30,7 +30,8 @@ Vue.component('unitsDisplay', {
     props: ['units'],
     template: `
         <div id="unitsDisplay">
-            <unit v-for="unit in units" v-bind:key="unit.id" v-bind:unit="unit"></unit>
+            <unit v-if="units.length > 0" v-for="unit in units" v-bind:key="unit.id" v-bind:unit="unit"></unit>
+            <div v-if="units.length == 0" class="noCallDisplay">No assigned units</div>
         </div>`
 });
 
