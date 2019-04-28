@@ -1,4 +1,16 @@
-local url = "https://192.168.0.101:4000/api";
+local url = "https://192.168.0.101:4000/api"
+local whitelisted = {}
+local useWhitelist = true
+
+-- Generic "check if value is in array" function
+local function hasValue(tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+    return false
+end
 
 local passToClient = function(source, jsonData, type)
     local targetUser
@@ -52,6 +64,31 @@ function sendMessageTo(payload)
     )
 end
 
+local getWhitelisted = function()
+    whitelisted = {}
+    local whitelistPayload = {  
+        operationName = null,
+        query = '{allWhitelisted{steamId}}'
+    }
+    local queryToSend = json.encode(whitelistPayload)
+    PerformHttpRequest(
+        url,
+        function (errorCode, resultData, resultHeaders)
+            if errorCode ~= 200 then
+                print('CADvanced: ERROR - Unable to retrieve whitelisted players, error code ' .. errorCode)
+                return errorCode
+            end
+            local result = json.decode(resultData)
+            for _, wl in ipairs(result.data.allWhitelisted) do
+                table.insert(whitelisted, wl.steamId);
+            end
+        end,
+        'POST',
+        queryToSend,
+        { ["Content-Type"] = 'application/json' }
+    )
+end
+
 -- Rudimentary router
 SetHttpHandler(function(req, res)
     if req.method == 'POST' then
@@ -62,6 +99,9 @@ SetHttpHandler(function(req, res)
                 if (data.event == 'update' and data.object == 'units') then
                     -- Prompt each client to refetch it's units
                     TriggerClientEvent("event:refetchUnits", -1)
+                elseif (data.event == 'update' and data.object == 'whitelist') then
+                    -- Update our whitelist
+                    getWhitelisted()
                 end
                 res.send(
                     json.encode({ result = 'Message sent'})
@@ -137,12 +177,16 @@ function getUserFromSteamId(steamId)
 end
 
 -- Check if a user has a SteamID
-local validate = function(source)
+local validate = function(source, setKickReason)
     local id = getSteamId(source)
 	if not id then
 		setKickReason("Unable to find SteamID, please relaunch FiveM with steam open or restart FiveM & Steam if steam is already open")
 		CancelEvent()
-	end
+    end
+    if useWhitelist and not hasValue(whitelisted, id) then
+		setKickReason("You are not whitelisted for this server")
+		CancelEvent()
+    end
 end
 
 -- Pass the client the units when requested
@@ -161,8 +205,8 @@ end)
 
 -- Validate a user when they connect
 RegisterServerEvent('playerConnecting')
-AddEventHandler('playerConnecting', function()
-    validate(source)
+AddEventHandler('playerConnecting', function(name, setKickReason)
+    validate(source, setKickReason)
 end)
 
 -- Send a player's location when prompted to
@@ -194,3 +238,5 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
             end
     end)
 end)
+
+getWhitelisted()
