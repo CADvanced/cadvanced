@@ -55,6 +55,7 @@ Vue.component('terminal', {
         </div>`
 });
 
+var player = null;
 var app = new Vue({
     el: '#app',
     template:
@@ -66,8 +67,8 @@ var app = new Vue({
     },
     methods: {
         playRoger: function() {
-            const roger = new Howl({ src: ['./sounds/roger.ogg'] });
-            roger.play();
+            player = new Howl({ src: ['./sounds/roger.ogg'] });
+            player.play();
         },
         processMessage: function() {
             const item = event.data;

@@ -1,4 +1,4 @@
-description 'Cadvanced'
+description 'CADvanced'
 
 ui_page 'html/index.html'
 
@@ -10,5 +10,5 @@ files {
     'html/style.css',
     'html/reset.css',
     'html/listener.js',
-    'html/roger.ogg'
+    'html/sounds/roger.ogg'
 }
