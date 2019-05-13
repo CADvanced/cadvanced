@@ -24,7 +24,7 @@ local setBlips = function(assignedCalls)
         local markerY = c.markerY
         if (markerX and markerY) then
             local blip = AddBlipForCoord(markerX, markerY)
-            SetBlipSprite(blip, 103)
+            SetBlipSprite(blip, 398)
             SetBlipColour(blip, 0)
             SetBlipDisplay(blip, 2)
             SetBlipAsShortRange(blip, false)
