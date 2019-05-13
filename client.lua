@@ -87,9 +87,11 @@ end)
 
 RegisterNetEvent('msg:updateMsg')
 AddEventHandler('msg:updateMsg', function(payload)
-    -- Change to
-    -- https://forum.fivem.net/t/switching-from-chatmessage-to-chat-addmessage/373482
-    TriggerEvent('chatMessage', "", {255, 255, 255}, 'CADvanced: ' .. payload.message)
+    TriggerEvent('chat:addMessage', {
+        color = { 255, 0, 0},
+        multiline = true,
+        args = {"CADvanced", payload.message}
+    })
 end)
 
 RegisterNetEvent('event:refetchUnits')
