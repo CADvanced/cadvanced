@@ -61,7 +61,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
-        if IsControlPressed(1, 21) and IsControlJustPressed(1, 26) then
+        if IsControlPressed(1, 21) and IsControlJustPressed(1, 40) then
             if (cadActive) then
                 hideCad()
                 userDisplayedCad = false
