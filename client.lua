@@ -1,13 +1,24 @@
 local oldPos
 local blips = {}
+local cadActive = false
+local userDisplayedCad = false
 
-local toggleCad = function()
+local showCad = function()
     TriggerServerEvent('cv:passUnits')
     TriggerServerEvent('cv:passUser')
     SendNUIMessage({
-      type = "toggle",
-      toToggle = "cad"
+      type = "show",
+      toShow = "cad"
     })
+    cadActive = true
+end
+
+local hideCad = function()
+    SendNUIMessage({
+      type = "hide",
+      toHide = "cad"
+    })
+    cadActive = false
 end
 
 local removeBlips = function()
@@ -39,7 +50,7 @@ end
 Citizen.CreateThread(function()
     while true do
         local pos = GetEntityCoords(GetPlayerPed(-1))
-        if (oldPos ~= pos)then
+        if (oldPos ~= pos) then
             TriggerServerEvent('cv:updatePosition', pos.x, pos.y, pos.z)
             oldPos = pos
         end
@@ -51,7 +62,28 @@ Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
         if IsControlPressed(1, 21) and IsControlJustPressed(1, 26) then
-            toggleCad()
+            if (cadActive) then
+                hideCad()
+                userDisplayedCad = false
+            else
+                showCad()
+                userDisplayedCad = true
+            end 
+        end
+    end
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        if IsPauseMenuActive() then
+            if cadActive then
+                hideCad()
+            end
+        else
+            if userDisplayedCad and not cadActive then
+                showCad()
+            end
         end
     end
 end)

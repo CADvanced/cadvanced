@@ -73,9 +73,13 @@ var app = new Vue({
         processMessage: function() {
             const item = event.data;
             if (item !== undefined) {
-                if (item.type === 'toggle') {
-                    if (item.toToggle === 'cad') {
-                        this.display = !this.display;
+                if (item.type === 'show') {
+                    if (item.toShow === 'cad') {
+                        this.display = true;
+                    }
+                } else if (item.type == 'hide') {
+                    if (item.toHide === 'cad') {
+                        this.display = false;
                     }
                 } else if (item.type == 'units') {
                     this.playRoger();
