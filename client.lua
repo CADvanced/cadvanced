@@ -119,10 +119,10 @@ end)
 
 RegisterNetEvent('msg:updateMsg')
 AddEventHandler('msg:updateMsg', function(payload)
-    TriggerEvent('chat:addMessage', {
-        color = { 255, 0, 0},
-        multiline = true,
-        args = {"CADvanced", payload.message}
+    -- Pass data to NUI
+    SendNUIMessage({
+        type = "message",
+        payload = payload
     })
 end)
 

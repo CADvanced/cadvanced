@@ -31,7 +31,7 @@ function getAllUnits(source)
     local id = getSteamId(source)
     local unitPayload = {  
         operationName = null,
-        query = '{usersUnits(steamId:"' .. id .. '"){callSign unitType{name}unitState {name colour}assignedCalls{id callerInfo markerX markerY callGrade{name}callType {name}callLocations {name}callIncidents{name}callDescriptions{text}}}}'
+        query = '{usersUnits(steamId:"' .. id .. '"){id callSign unitType{name}unitState {name colour}assignedCalls{id callerInfo markerX markerY callGrade{name}callType {name}callLocations {name}callIncidents{name}callDescriptions{text}}}}'
     }
     local queryToSend = json.encode(unitPayload)
     PerformHttpRequest(
@@ -51,10 +51,12 @@ end
 
 function sendMessageTo(payload)
     local destination = -1
-    if payload.steamId then
-        local id = getUserFromSteamId(payload.steamId)
-        if id then
-            destination = id
+    if payload.type == 'user' then
+        if payload.steamId then
+            local id = getUserFromSteamId(payload.steamId)
+            if id then
+                destination = id
+            end
         end
     end
     TriggerClientEvent(
