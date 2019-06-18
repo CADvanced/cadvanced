@@ -6,6 +6,7 @@ local userDisplayedCad = false
 local showCad = function()
     TriggerServerEvent('cv:passUnits')
     TriggerServerEvent('cv:passUser')
+    TriggerServerEvent('cv:passConfig')
     SendNUIMessage({
       type = "show",
       toShow = "cad"
@@ -114,6 +115,16 @@ AddEventHandler('data:user', function(jsonData)
     SendNUIMessage({
       type = "user",
       user = jsonData
+    })
+end)
+
+-- Receive config object from the server then pass it to NUI
+RegisterNetEvent('data:config')
+AddEventHandler('data:config', function(jsonData)
+    -- Pass data to NUI
+    SendNUIMessage({
+      type = "config",
+      config = jsonData
     })
 end)
 

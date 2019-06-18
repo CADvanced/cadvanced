@@ -63,14 +63,20 @@ var app = new Vue({
     data: {
         display: false,
         user: {},
-        units: []
+        units: [],
+        config: {
+            soundVolume: 0.5
+        }
     },
     methods: {
         isInUnit: function(unitId) {
             return this.units.find(unit => unit.id == unitId);
         },
         playRoger: function() {
-            player = new Howl({ src: ['./sounds/roger.ogg'] });
+            player = new Howl({
+                src: ['./sounds/roger.ogg'],
+                volume: parseFloat(this.config.soundVolume)
+            });
             player.play();
         },
         processMessage: function() {
@@ -86,6 +92,13 @@ var app = new Vue({
                     }
                 } else if (item.type == 'units') {
                     this.units = item.units.data.usersUnits;
+                } else if (item.type == 'config') {
+                    const config = JSON.parse(item.config);
+                    this.config = Object.assign(
+                        {},
+                        config,
+                        JSON.parse(item.config)
+                    );
                 } else if (item.type == 'message') {
                     if (
                         (item.payload.type == 'unit' &&

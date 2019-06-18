@@ -1,6 +1,12 @@
-local url = "https://192.168.0.101:4000/api"
+-- Config values
+local url = "https://beta-6cmdy38r.cadvanced.app/api" -- The full URL of your CADvanced
+local useWhitelist = true -- Only allow people with the "Player" role to join
+local soundVolume = 0.5   -- A value between 0 and 1
+
+
+-- DO NOT EDIT ANYTHING BELOW THIS LINE
+
 local whitelisted = {}
-local useWhitelist = true
 
 -- Generic "check if value is in array" function
 local function hasValue(tab, val)
@@ -195,6 +201,13 @@ end
 RegisterServerEvent('cv:passUnits')
 AddEventHandler('cv:passUnits', function()
     getAllUnits(source)
+end)
+
+-- Pass the client the config when requested
+RegisterServerEvent('cv:passConfig')
+AddEventHandler('cv:passConfig', function()
+    -- Return the current config to the user
+    passToClient(nil, '{"soundVolume":'..soundVolume..'}', 'config') 
 end)
 
 -- Pass the client the user when requested
