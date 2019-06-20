@@ -104,7 +104,7 @@ var app = new Vue({
                         (item.payload.type == 'unit' &&
                             this.isInUnit(item.payload.id)) ||
                         (item.payload.type == 'user' &&
-                            item.payload.id == this.user.steamId)
+                            item.payload.steamId == this.user.steamId)
                     ) {
                         this.playRoger();
                     }
