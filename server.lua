@@ -1,5 +1,5 @@
 -- Config values
-local url = "https://beta-6cmdy38r.cadvanced.app/api" -- The full URL of your CADvanced
+local url = "https://<your_cadvanced_url_here>" -- The full URL of your CADvanced
 local useWhitelist = true -- Only allow people with the "Player" role to join
 local soundVolume = 0.5   -- A value between 0 and 1
 
@@ -41,7 +41,7 @@ function getAllUnits(source)
     }
     local queryToSend = json.encode(unitPayload)
     PerformHttpRequest(
-        url,
+        url .. '/api',
         function (errorCode, resultData, resultHeaders)
             if errorCode ~= 200 then
                 print('CADvanced: ERROR - Unable to retrieve all units, error code ' .. errorCode)
@@ -80,7 +80,7 @@ local getWhitelisted = function()
     }
     local queryToSend = json.encode(whitelistPayload)
     PerformHttpRequest(
-        url,
+        url .. '/api',
         function (errorCode, resultData, resultHeaders)
             if errorCode ~= 200 then
                 print('CADvanced: ERROR - Unable to retrieve whitelisted players, error code ' .. errorCode)
@@ -144,7 +144,7 @@ function getUser(source)
     }
     local reqToSend = json.encode(userPayload)
     PerformHttpRequest(
-        url,
+        url .. '/api',
         function (errorCode, resultData, resultHeaders)
             if errorCode ~= 200 then
                 print('CADvanced: ERROR - Unable to retrieve user units, error code ' .. errorCode)
@@ -242,7 +242,7 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
                         query = "mutation ($steamId: String!, $x: String!, $y: String!) {\n  updateUserLocation(steamId: $steamId, x: $x, y: $y) {\n    id\n    __typename\n  }\n}\n"
                     };
 					local tosend = json.encode(payload)
-					PerformHttpRequest(url, function(errorCode, resultData, resultHeaders)
+					PerformHttpRequest(url .. '/api', function(errorCode, resultData, resultHeaders)
 						end,
 						'POST',
 						tosend,
