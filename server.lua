@@ -163,11 +163,11 @@ end
 function getSteamId(source)
     local id = nil
     for k,v in ipairs(GetPlayerIdentifiers(source))do
-		if string.sub(v, 1, string.len("steam:")) == "steam:" then
+        if string.sub(v, 1, string.len("steam:")) == "steam:" then
             local trimmed = v:gsub("steam:","")
-			id = trimmed
-			break
-		end
+            id = trimmed
+            break
+        end
     end
     return id
 end
@@ -188,13 +188,13 @@ end
 -- Check if a user has a SteamID
 local validate = function(source, setKickReason)
     local id = getSteamId(source)
-	if not id then
-		setKickReason("Unable to find SteamID, please relaunch FiveM with steam open or restart FiveM & Steam if steam is already open")
-		CancelEvent()
+    if not id then
+        setKickReason("Unable to find SteamID, please relaunch FiveM with steam open or restart FiveM & Steam if steam is already open")
+        CancelEvent()
     end
     if useWhitelist and not hasValue(whitelisted, id) then
-		setKickReason("You are not whitelisted for this server")
-		CancelEvent()
+        setKickReason("You are not whitelisted for this server")
+        CancelEvent()
     end
 end
 
@@ -231,8 +231,8 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
     local Source = source
     Citizen.CreateThread(function()
             for k,v in ipairs(GetPlayerIdentifiers(Source)) do
-				if string.sub(v, 1, string.len("steam:")) == "steam:" then
-					local id = v:gsub("steam:","")
+                if string.sub(v, 1, string.len("steam:")) == "steam:" then
+                    local id = v:gsub("steam:","")
                     local payload = {  
                         operationName = null,
                         variables = {  
@@ -242,15 +242,15 @@ AddEventHandler('cv:updatePosition', function(x, y, z)
                         },
                         query = "mutation ($steamId: String!, $x: String!, $y: String!) {\n  updateUserLocation(steamId: $steamId, x: $x, y: $y) {\n    id\n    __typename\n  }\n}\n"
                     };
-					local tosend = json.encode(payload)
-					PerformHttpRequest(url .. '/api', function(errorCode, resultData, resultHeaders)
-						end,
-						'POST',
-						tosend,
-						{ ["Content-Type"] = 'application/json' }
-					)
-					break
-				end
+                    local tosend = json.encode(payload)
+                    PerformHttpRequest(url .. '/api', function(errorCode, resultData, resultHeaders)
+                        end,
+                        'POST',
+                        tosend,
+                        { ["Content-Type"] = 'application/json' }
+                    )
+                    break
+                end
             end
     end)
 end)
