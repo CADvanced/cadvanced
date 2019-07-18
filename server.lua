@@ -6,6 +6,7 @@ local soundVolume = 0.5   -- A value between 0 and 1
 
 -- DO NOT EDIT ANYTHING BELOW THIS LINE
 
+local version = "1.0.0"
 local whitelisted = {}
 
 -- Generic "check if value is in array" function
