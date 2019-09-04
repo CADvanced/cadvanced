@@ -1,6 +1,6 @@
 -- Config values
 local url = "https://<your_cadvanced_url_here>" -- The full URL of your CADvanced
-local useWhitelist = true -- Only allow people with the "Player" role to join
+local useWhitelist = false -- Only allow people with the "Player" role to join
 local soundVolume = 0.5   -- A value between 0 and 1
 
 
