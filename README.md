@@ -22,7 +22,7 @@ cd resources
 git clone https://github.com/CADvanced/cadvanced_fivem.git
 ```
 
-## Manually
+### Manually
 
 Download the latest release from the [Releases](https://github.com/Chuckatron/cadvanced_fivem/releases) tab above.
 
