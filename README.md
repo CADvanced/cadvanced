@@ -6,7 +6,23 @@ The resource is offered as an optional, free plugin with all CADvanced plans.
 
 The commit messages are pretty poor, they were purely for my benefit when developing the resource, please forgive me...
 
-## Installing
+## Download and installation
+
+### Using [FVM](https://github.com/qlaffont/fvm-installer)
+
+```
+fvm install --save CADvanced/cadvanced_fivem
+```
+
+### Using Git
+
+```
+cd resources
+
+git clone https://github.com/CADvanced/cadvanced_fivem.git
+```
+
+## Manually
 
 Download the latest release from the [Releases](https://github.com/Chuckatron/cadvanced_fivem/releases) tab above.
 
@@ -24,9 +40,9 @@ You can also modify the other settings that appear above the "DO NOT EDIT ANYTHI
 * Once you have configured server.lua as described above, you can continue
 * On your FiveM server, locate your `server-data` folder
 * In the `server-data` folder, go into the `resources` folder
-* Copy the `cadvanced` directory from the zip file onto your FiveM server, inside the `resources` folder
+* Copy the contents of the `cadvanced` directory from the zip file onto your FiveM server, into a `resources/cadvanced_fivem` folder
 * Your resource is now installed
-* If you want to start the resource immediately, type `start cadvanced` in the FiveM console
+* If you want to start the resource immediately, type `start cadvanced_fivem` in the FiveM console
 * If you want the resource to start when the FiveM server starts, edit the `server.cfg` file inside `server-data` folder
-  * You will see a number of lines starting with `start`, add a new line at the bottom of this list saying `start cadvanced`
+  * You will see a number of lines starting with `start`, add a new line at the bottom of this list saying `start cadvanced_fivem`
 * You're done!
