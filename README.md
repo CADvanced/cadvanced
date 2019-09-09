@@ -46,3 +46,22 @@ You can also modify the other settings that appear above the "DO NOT EDIT ANYTHI
 * If you want the resource to start when the FiveM server starts, edit the `server.cfg` file inside `server-data` folder
   * You will see a number of lines starting with `start`, add a new line at the bottom of this list saying `start cadvanced_fivem`
 * You're done!
+
+## Configuration
+
+Edit server.lua and modify the line:
+```
+local url = "https://<your_cadvanced_url_here>"
+```
+replace `<your_cadvanced_url_here>` with the full URL of your CADvanced server, for example: `mycadvanced.cadvanced.app`
+
+
+You can also modify the other settings that appear above the "DO NOT EDIT ANYTHING BELOW THIS LINE"
+```
+useWhitelist = false
+```
+Determines whether to use the in-built whitelist, i.e. only allow users with "Player" role on the CAD to join
+```
+local soundVolume = 0.5
+```
+Determines the volume of the alert sound when an update from the CAD arrives in game
