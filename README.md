@@ -8,6 +8,9 @@ The commit messages are pretty poor, they were purely for my benefit when develo
 
 ## Download and installation
 
+### IMPORTANT: It is very important that the resource is installed in a folder called `cadvanced`, if this is not the case, the resource will not work correctly.
+
+
 ### Using [FVM](https://github.com/qlaffont/fvm-installer)
 
 ```
