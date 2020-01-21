@@ -27,7 +27,7 @@ git clone https://github.com/CADvanced/cadvanced.git
 
 ### Manually
 
-Download the latest release from the [Releases](https://github.com/Chuckatron/cadvanced/releases) tab above.
+Download the latest release from the [Releases](https://github.com/CADvanced/cadvanced/releases) tab above.
 
 After you download the resource, you will need to configure it before uploading it to your FiveM server.
 
