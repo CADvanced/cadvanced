@@ -1,0 +1,25 @@
+FROM httpd:latest
+
+ENV NODE_VERSION=12.22.12
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+RUN apt update
+RUN apt install -y git vim curl build-essential python
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+
+COPY ./httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY ./vhost.conf /usr/local/apache2/conf/vhost.conf
+RUN sh -c "echo "\nServerName ${CLIENT_DOMAIN}" >> /usr/local/apache2/conf/httpd.conf"
+
+RUN mkdir -p /var/log/apache
+WORKDIR /usr/src/cadvanced-frontend
+COPY ./packages/cadvanced_client/package.json ./
+RUN npm install
+COPY ./packages/cadvanced_client/ ./
+RUN npm run build
+RUN cp -r /usr/src/cadvanced-frontend/build/* /usr/local/apache2/htdocs

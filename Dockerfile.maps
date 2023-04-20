@@ -1,0 +1,28 @@
+# Pulling Ubuntu image
+FROM ubuntu:latest
+
+ENV NODE_VERSION=12.22.12
+
+RUN apt-get update && apt-get install cron -y 
+
+RUN crontab -l | { cat; echo "00,30 * * * * cd /usr/src/cadvanced_maps && node index.js >> process_maps.log"; } | crontab -
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+RUN apt update
+RUN apt install -y git vim curl build-essential python3 file
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+
+RUN mkdir /usr/src/cadvanced_maps
+WORKDIR /usr/src/cadvanced_maps
+COPY ./packages/process_maps/ ./
+COPY ./.env ./
+RUN npm install
+
+ENV NODE_ENV=production
+
+ENTRYPOINT ["cron", "-f"]

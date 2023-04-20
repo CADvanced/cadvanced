@@ -1,0 +1,56 @@
+version: "3.9"
+services:
+    maps:
+        image: cadvanced-maps:latest
+        build:
+            dockerfile: Dockerfile.maps
+        restart: always
+        volumes:
+            - maps:/usr/local/apache2/htdocs/maps
+            - map_upload:/usr/local/apache2/htdocs/map_upload
+        env_file: .env
+    db:
+        image: cadvanced-db:latest
+        build:
+            dockerfile: Dockerfile.db
+        restart: always
+        volumes:
+            - db:/var/lib/postgresql/data
+        env_file: .env
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+    api:
+        image: cadvanced-api:latest
+        build:
+            dockerfile: Dockerfile.api
+        restart: always
+        volumes:
+            - map_upload:/usr/local/apache2/htdocs/map_upload
+            - logo_upload:/usr/local/apache2/htdocs/logo_upload
+        env_file: .env
+        depends_on:
+            db:
+                condition: service_healthy
+    frontend:
+        image: cadvanced-frontend:latest
+        env_file: .env
+        build:
+            dockerfile: Dockerfile.frontend
+        restart: always
+        volumes:
+            - maps:/usr/local/apache2/htdocs/maps
+            - logo_upload:/usr/local/apache2/htdocs/logo_upload
+        ports:
+            - "80:80"
+volumes:
+    db:
+        driver: local
+    maps:
+        driver: local
+    map_upload:
+        driver: local
+    logo_upload:
+        driver: local

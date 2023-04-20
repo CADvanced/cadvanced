@@ -1,0 +1,11 @@
+FROM node:18.12.0
+
+RUN mkdir /usr/src/cadvanced_server
+WORKDIR /usr/src/cadvanced_server
+COPY ./packages/cadvanced_server/ ./
+COPY ./.env ./
+RUN npm install
+
+ENV NODE_ENV=production
+
+CMD node src/index.js 

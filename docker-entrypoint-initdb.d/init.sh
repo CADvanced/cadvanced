@@ -1,0 +1,8 @@
+psql -U postgres -c "CREATE DATABASE cadvanced;"
+psql -U postgres -d cadvanced -c "CREATE USER ${DB_USERNAME} PASSWORD '${DB_PASSWORD}';
+CREATE SCHEMA cadvanced;
+GRANT CONNECT ON DATABASE cadvanced TO ${DB_USERNAME};
+GRANT ALL ON SCHEMA cadvanced TO ${DB_USERNAME};
+GRANT ALL ON ALL TABLES IN SCHEMA cadvanced TO ${DB_USERNAME};
+GRANT ALL ON ALL SEQUENCES IN SCHEMA cadvanced TO ${DB_USERNAME};
+ALTER ROLE ${DB_USERNAME} SET search_path TO cadvanced;"
