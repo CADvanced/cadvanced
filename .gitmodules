@@ -1,9 +1,9 @@
-[submodule "packages/cadvanced_server"]
-	path = packages/cadvanced_server
-	url = git@github.com:AndrewIsh/cadvanced_server.git
 [submodule "packages/cadvanced_client"]
 	path = packages/cadvanced_client
-	url = git@github.com:AndrewIsh/cadvanced_client.git
+	url = https://github.com/CADvanced/cadvanced_client.git
+[submodule "packages/cadvanced_server"]
+	path = packages/cadvanced_server
+	url = https://github.com/CADvanced/cadvanced_server.git
 [submodule "packages/process_maps"]
 	path = packages/process_maps
-	url = git@github.com:AndrewIsh/process_maps.git
+	url = https://github.com/CADvanced/process_maps.git
