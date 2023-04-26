@@ -1,9 +1,7 @@
 version: "3.9"
 services:
     maps:
-        image: cadvanced-maps:latest
-        build:
-            dockerfile: Dockerfile.maps
+        image: cadvanced/process_maps:latest
         restart: always
         volumes:
             - ./.env:/.env:ro
@@ -11,9 +9,7 @@ services:
             - map_upload:/usr/local/apache2/htdocs/map_upload
         env_file: .env
     db:
-        image: cadvanced-db:latest
-        build:
-            dockerfile: Dockerfile.db
+        image: cadvanced/cadvanced-db:latest
         restart: always
         volumes:
             - ./.env:/.env:ro
@@ -25,9 +21,7 @@ services:
             timeout: 5s
             retries: 5
     api:
-        image: cadvanced-api:latest
-        build:
-            dockerfile: Dockerfile.api
+        image: cadvanced/cadvanced-api:latest
         restart: always
         volumes:
             - ./.env:/.env:ro
@@ -38,10 +32,8 @@ services:
             db:
                 condition: service_healthy
     frontend:
-        image: cadvanced-frontend:latest
+        image: cadvanced/cadvanced-frontend:latest
         env_file: .env
-        build:
-            dockerfile: Dockerfile.frontend
         restart: always
         volumes:
             - ./.env:/.env:ro
