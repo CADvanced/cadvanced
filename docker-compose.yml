@@ -6,6 +6,7 @@ services:
             dockerfile: Dockerfile.maps
         restart: always
         volumes:
+            - ./.env:/.env:ro
             - maps:/usr/local/apache2/htdocs/maps
             - map_upload:/usr/local/apache2/htdocs/map_upload
         env_file: .env
@@ -15,6 +16,7 @@ services:
             dockerfile: Dockerfile.db
         restart: always
         volumes:
+            - ./.env:/.env:ro
             - db:/var/lib/postgresql/data
         env_file: .env
         healthcheck:
@@ -28,6 +30,7 @@ services:
             dockerfile: Dockerfile.api
         restart: always
         volumes:
+            - ./.env:/.env:ro
             - map_upload:/usr/local/apache2/htdocs/map_upload
             - logo_upload:/usr/local/apache2/htdocs/logo_upload
         env_file: .env
@@ -41,6 +44,7 @@ services:
             dockerfile: Dockerfile.frontend
         restart: always
         volumes:
+            - ./.env:/.env:ro
             - maps:/usr/local/apache2/htdocs/maps
             - logo_upload:/usr/local/apache2/htdocs/logo_upload
         ports:

@@ -20,7 +20,6 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN mkdir /usr/src/cadvanced_maps
 WORKDIR /usr/src/cadvanced_maps
 COPY ./packages/process_maps/ ./
-COPY ./.env ./
 RUN npm install
 
 ENV NODE_ENV=production
